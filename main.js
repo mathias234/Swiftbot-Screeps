@@ -7,11 +7,14 @@ var spawnCreeps = require('world.respawnCreeps');
 var getSource = require('world.getSource');
 var buildRoads = require('world.builder');
 var ui = require('room.ui');
+var alliance = require('game.alliance');
 
 module.exports.loop = function () {
     Game.toggleUi = function () {
         Memory.showUi = !Memory.showUi;
     }
+
+    Game.addToAlliance = alliance.addToAlliance;
 
     Memory.CPU = Game.cpu;
 
@@ -75,7 +78,7 @@ module.exports.loop = function () {
             continue;
         }
 
-        const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        const target = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS, { filter: c => alliance.isCreepFriendly(c) });
         if (target) {
             // Scramble all creeps with ATTACK or RANGED_ATTACK body parts to defend the base, stop all work
             if (creep.memory.role == 'attack_melee' || creep.memory.role == 'attack_ranged') {
